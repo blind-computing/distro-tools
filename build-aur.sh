@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# Check number of arguments
+if [ "$#" -lt 1 ]; then
+    cat <<EOF
+Usage: $0 repo.db"
+
+Download and build packages from the AUR,, then add them to a repo."
+
+Positional Arguments:"
+repo        Path to an arch-linux repository file. This is passed directly to repo-add(8)."
+EOF
+exit 1
+fi
+
 SCRIPT_NAME="$0"
 REPO="$1"
 
@@ -19,7 +32,7 @@ mkdir build
 pushd build
 
 while read pkg; do
-    if yay -G "$pkg"; then
+    if yay --noconfirm -G "$pkg"; then
         buildpkg "$pkg" || error "$pkg" "buildpkg exited with status $?"
     else
         error "$pkg" "could not clone pkgbuild repository. Yay exitted with status $?"
